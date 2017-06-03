@@ -5,7 +5,11 @@ class NotesController < ApplicationController
 
   def create
     note= Note.create(note_params)
-    render json: note, status: :created
+    if note.valid?
+      render json: note, status: :created
+    else
+       render json: render_errors(note), status: :unprocessable_entity
+    end
   end
 
 
@@ -13,5 +17,9 @@ class NotesController < ApplicationController
 
   def note_params
     params.require(:note).permit(:title,:content)
+  end
+
+  def render_errors(note)
+    { errors: note.errors }
   end
 end
