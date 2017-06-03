@@ -16,7 +16,7 @@ class NotesController < ApplicationController
 
   def show
     note = Note.find(params[:id])
-    render json: note
+   render json: note.as_json(include: :tags)
   end
 
   def update

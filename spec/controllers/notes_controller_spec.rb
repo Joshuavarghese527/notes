@@ -55,14 +55,24 @@ RSpec.describe NotesController, type: :controller do
     end
   end
 
-  describe "note#show action" do
-    it "should return a note" do
-      note = FactoryGirl.create(:note)
-      get :show, params: { id: note.id}
-      json = JSON.parse(response.body)
-      expect(json['id']).to eq(note.id)
-    end
+  describe "notes#show action" do
+  before do
+    @note = FactoryGirl.create(:note)
   end
+
+  it "should return a note" do
+    get :show, params: { id: @note.id }
+    json = JSON.parse(response.body)
+    expect(json['id']).to eq(@note.id)
+  end
+
+  it "should include associated tags in response" do
+    tag = FactoryGirl.create(:tag, note_id: @note.id)
+    get :show, params: { id: @note.id }
+    json = JSON.parse(response.body)
+    expect(json['tags'][0]['name']).to eq(tag.name)
+  end
+end
 
 describe "notes#update action" do
   before do
